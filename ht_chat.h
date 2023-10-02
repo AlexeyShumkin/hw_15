@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 #include "sha1.h"
 constexpr int size = 10;
 class Chat
@@ -14,7 +15,6 @@ private:
 	{
 		free,
 		engaged,
-		deleted
 	};
 	struct Pair
 	{

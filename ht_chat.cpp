@@ -49,20 +49,33 @@ void Chat::reg(char login[size], char pass[], int pass_length)
 
 bool Chat::login(char login[size], char pass[], int pass_length) 
 {
-
 	int index = 0, i = 0;
-	for (; i < memsize_; i++) {
+	for (; i < memsize_; i++) 
+	{
 		index = hash_func(login, i);
 		if (data_[index].status_ == free)
+		{
+			std::cout << "There is no user with such login in the chat room!\n";
 			return false;
+		}
 		else if (data_[index].status_ == engaged && !memcmp(login, data_[index].login_, size))
-			break;
+		{
+			uint* hash = sha1(pass, pass_length);
+			for (int j = 0; j < SHA1HASHLENGTHUINTS; ++j)
+			{
+				if (hash[j] != data_[index].hash_[j])
+				{
+					std::cout << "Invalid password!\n";
+					delete[] hash;
+					return false;
+				}	
+			}
+			std::cout << "Welcome to the chat room!\n";
+			delete[] hash;
+			return true;
+		}
 	}
-	if (i >= memsize_) return false;
-	uint* hash = sha1(pass, pass_length);
-	bool cmpHashes = !memcmp(data_[index].hash_, hash, SHA1HASHLENGTHBYTES);
-	delete[] hash;
-	return cmpHashes;
+	return false;
 }
 
 void Chat::add(char login[size], uint* hash) 
